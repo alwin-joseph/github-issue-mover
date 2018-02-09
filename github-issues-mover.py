@@ -159,8 +159,8 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
             else:
                 time.sleep(5)
                 cnt = cnt + 1
-        # if issue_data['state'] == 'open':
-        #     close_original_issue(url_source_repo,headers,issue_data,issue_creation_status['issue_url'])
+        if issue_data['state'] == 'open':
+            close_original_issue(url_source_repo,headers,issue_data,issue_creation_status['issue_url'])
         print('Completed Migration of Issue Number ' + str(issue))          
         issue = issue + 1
     
