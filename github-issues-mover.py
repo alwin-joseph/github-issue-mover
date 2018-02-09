@@ -143,6 +143,7 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
                 request_count = 1
         url = url_source_repo + '/issues/'+ str(issue)    
         issue_data,_ = get_data(url,headers)
+        milestone_number = None
         milestone = issue_data['milestone']
         if milestone is not None:
             milestone_number = create_milestone(milestones_post_url,headers,milestone)
