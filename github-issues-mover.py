@@ -34,23 +34,33 @@ def get_data(url,headers):
         retry_cnt = retry_cnt + 1     
     sys.exit('GET operation for '+url+' sending status '+str(response.status_code))
 
-def populate_target_org_members(target_org_members_url,headers):
-    members,member_header = get_data(target_org_members_url,headers)
-    for member in members:
-        target_org_users.append(member['login'])
-    if 'Link' in member_header:
+def get_paginated_data(url,headers):
+    data,response_header = get_data(url,headers)
+    if 'Link' in response_header:
         starting_page = 2
         while True:
-            paginated_org_member_url = target_org_members_url+'?page='+str(starting_page)
-            members,member_header = get_data(paginated_org_member_url,headers)
-            for member in members:
-                target_org_users.append(member['login'])
-            if 'rel="next"' not in member_header['Link']:
+            paginated_url = url+'?page='+str(starting_page)
+            paginated_data,response_header = get_data(paginated_url,headers)
+            for d in paginated_data:
+                data.append(d)
+            if 'rel="next"' not in response_header['Link']:
                 break
-            starting_page = starting_page + 1    
+            starting_page = starting_page + 1  
+    return data
 
+
+def populate_target_org_members(target_org_members_url,headers):
+    members = get_paginated_data(target_org_members_url,headers)
+    for member in members:
+        target_org_users.append(member['login'])
+      
 def create_milestone(milestones_post_url,headers,milestone):
     global milestones_cache
+    if not milestones_cache:
+        existing_milestones = get_paginated_data(milestones_post_url,headers)
+        if existing_milestones:
+            for m in existing_milestones:
+                milestones_cache[m['title']] = m['number']   
     milestone_title = milestone['title']
     if milestone_title in milestones_cache:
         return milestones_cache[milestone_title]
