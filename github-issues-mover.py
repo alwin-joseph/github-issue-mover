@@ -74,7 +74,10 @@ def construct_issue(issue_data,milestone_number):
         issue['closed'] = True
     else:
         issue['title'] = issue_data['title']
-        issue['body'] = issue_data['body']
+        if issue_data['body'] != "":
+            issue['body'] = issue_data['body']
+        else:
+            issue['body'] = 'No description provided.'
         issue['created_at'] = issue_data['created_at']
         issue['updated_at'] = issue_data['updated_at']
         labels = issue_data['labels']
