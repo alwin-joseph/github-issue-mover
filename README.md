@@ -23,7 +23,7 @@ Closed by information will only be available for the closed issues.
 
 **Prerequisite** Docker should be installed on the system
 
-docker run -it -e source_repo=<source_repo> -e target_repo=<target_repo> -e bearer_token=<bearer_token> -e user=<user> -e http_proxy=<http_proxy> -e https_proxy=<https_proxy> arindamb/gh-issue-mover
+```docker run -it -e source_repo=<source_repo> -e target_repo=<target_repo> -e bearer_token=<bearer_token> -e user=<user> -e http_proxy=<http_proxy> -e https_proxy=<https_proxy> arindamb/gh-issue-mover```
   
 Here is brief explanation of all the mandatory and optional environment variable.
 * source_repo - Name of the source repository. It should be org_name/repo_name format. e.g - javaee/grizzly. It's **mandatory** 
