@@ -30,6 +30,6 @@ Here is brief explanation of all the mandatory and optional environment variable
 * target_repo - Name of the target repository. It should be org_name/repo_name format. e.g - eclipse-ee4j/grizzly. It's **mandatory**
 * bearer_token - GitHub Bearer token for eclipse-ee4j org admin. It's **mandatory**
   
-* user - GitHub user id for eclipse-ee4j org admin. It's **mandatory **
+* user - GitHub user id for eclipse-ee4j org admin. It's **mandatory**
 * start_issue - First issue number from the source repository for the migration. By default it's 1. It's **optional**
 * end_issue - last issue in the source repository to be migrated. By default it's the last issue of the source repository. It's **optional**
