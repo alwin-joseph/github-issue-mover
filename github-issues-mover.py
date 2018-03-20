@@ -134,7 +134,7 @@ def close_original_issue(url_source_repo,headers,issue_data,new_issue_api_url):
     url = url_source_repo + '/issues/' + str(issue_data['number'])
     post_data(url,issue,headers)
 
-def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_issue,user):
+def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_issue,user,close_issue):
     if end_issue is None:
         url = url_source_repo + '/issues?state=all'
         all_issues,_ = get_data(url,headers)
@@ -173,7 +173,7 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
             else:
                 time.sleep(5)
                 cnt = cnt + 1
-        if issue_data['state'] == 'open' and 'pull_request' not in issue_data:
+        if issue_data['state'] == 'open' and 'pull_request' not in issue_data and close_issue != 'n':
             close_original_issue(url_source_repo,headers,issue_data,issue_creation_status['issue_url'])
         print('Completed Migration of Issue Number ' + str(issue))          
         issue = issue + 1
@@ -182,6 +182,7 @@ if __name__ == "__main__":
     source_repo = os.environ.get('source_repo')
     target_repo = os.environ.get('target_repo')
     bearer_token = os.environ.get('bearer_token')
+    close_issue =  os.environ.get('close_issue')
     start_issue = int(os.environ.get('start_issue','1'))
     end_issue = os.environ.get('end_issue')
     user = os.environ.get('user')
@@ -206,6 +207,6 @@ if __name__ == "__main__":
     populate_target_org_members(target_org_members_url,headers)
     print('Total number of collaborators in  '+ target_org_name+' is '+str(len(target_org_users)))
     print("Starting Migration of issues from repository "+source_repo+" to "+target_repo+" repository at "+time.strftime("%H:%M:%S"))
-    import_issues(url_source_repo, url_target_repo, headers, start_issue, end_issue,user)
+    import_issues(url_source_repo, url_target_repo, headers, start_issue, end_issue,user, close_issue)
     print("Completed Migration of issues from repository "+source_repo+" to "+target_repo+" repository at "+time.strftime("%H:%M:%S"))
 
