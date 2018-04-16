@@ -23,7 +23,7 @@ Closed by information will only be available for the closed issues.
 
 **Prerequisite** Docker should be installed on the system
 
-```docker run -it -e source_repo=<source_repo> -e target_repo=<target_repo> -e bearer_token=<bearer_token> -e user=<user> -e http_proxy=<http_proxy> -e https_proxy=<https_proxy> arindamb/gh-issue-mover```
+```docker run -it -e source_repo=<source_repo> -e target_repo=<target_repo> -e bearer_token=<bearer_token> -e user=<user> -e close_issue=n -e http_proxy=www-proxy.us.oracle.com:80 -e https_proxy=www-proxy.us.oracle.com:80 arindamb/gh-issue-mover```
   
 Here is brief explanation of all the mandatory and optional environment variable.
 * source_repo - Name of the source repository. It should be org_name/repo_name format. e.g - javaee/grizzly. It's **mandatory** 
@@ -33,3 +33,4 @@ Here is brief explanation of all the mandatory and optional environment variable
 * user - GitHub user id for eclipse-ee4j org admin. It's **mandatory**
 * start_issue - First issue number from the source repository for the migration. By default it's 1. It's **optional**
 * end_issue - last issue in the source repository to be migrated. By default it's the last issue of the source repository. It's **optional**
+* close_issue - Please set close_issue=n if you don't want to close the original issue. By default it would close the original issue. It's **optional**
