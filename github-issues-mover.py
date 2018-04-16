@@ -127,7 +127,10 @@ def close_original_issue(url_source_repo,headers,issue_data,new_issue_api_url):
     comment_url = issue_data['comments_url']
     new_issue_api_url_split = new_issue_api_url.split('/')
     html_url = 'https://github.com/'+new_issue_api_url_split[4] + '/'+ new_issue_api_url_split[5] + '/issues/' + new_issue_api_url_split[7]
-    comment['body'] = '**Closing this as this issue is migrated to** ' + html_url
+    if 'pull_request' in issue_data:
+        comment['body'] = '**Closing this Pull Request as this repository is migrated to** '+'https://github.com/'+new_issue_api_url_split[4] + '/'+ new_issue_api_url_split[5]
+    else:
+        comment['body'] = '**Closing this as this issue is migrated to** ' + html_url
     post_data(comment_url,comment,headers)
     issue = {}
     issue['state'] = 'closed'
@@ -161,7 +164,7 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
         if milestone is not None:
             milestone_number = create_milestone(milestones_post_url,headers,milestone)
         issue_payload = construct_issue(issue_data,milestone_number)
-        print('Migrating Issue Number ' + str(issue))
+        print('Migrating Issue Number ' + str(issue) + ' ... ', end='')
         new_issue,_ = post_data(issue_post_url,issue_payload,headers)
         issue_creation_status = {}
         cnt = 0
@@ -173,9 +176,9 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
             else:
                 time.sleep(5)
                 cnt = cnt + 1
-        if issue_data['state'] == 'open' and 'pull_request' not in issue_data and close_issue != 'n':
+        if issue_data['state'] == 'open' and close_issue != 'n':
             close_original_issue(url_source_repo,headers,issue_data,issue_creation_status['issue_url'])
-        print('Completed Migration of Issue Number ' + str(issue))          
+        print('Done')          
         issue = issue + 1
     
 if __name__ == "__main__":
