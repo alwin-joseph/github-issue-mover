@@ -207,7 +207,7 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
             if issue_data['title'] != issue_data_new['title'] and 'pull_request' not in issue_data:
                 sys.exit('Exiting... Mismatch in issue number')
             else:
-                print('verified' + ' ... ', end=''')    
+                print('verified' + ' ... ', end='')
 
         if issue_data['state'] == 'open' and close_issue != 'n':
             close_original_issue(url_source_repo, headers,
