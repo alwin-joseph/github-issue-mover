@@ -6,7 +6,7 @@ import os
 
 request_count = 0
 milestones_cache = {}
-target_org_users = []
+target_repo_users = []
 
 
 def post_data(url, payload, headers):
@@ -53,10 +53,10 @@ def get_paginated_data(url, headers):
     return data
 
 
-def populate_target_org_members(target_org_members_url, headers):
-    members = get_paginated_data(target_org_members_url, headers)
+def populate_target_repo_members(target_repo_members_url, headers):
+    members = get_paginated_data(target_repo_members_url, headers)
     for member in members:
-        target_org_users.append(member['login'])
+        target_repo_users.append(member['login'])
 
 
 def create_milestone(milestones_post_url, headers, milestone):
@@ -83,7 +83,7 @@ def create_milestone(milestones_post_url, headers, milestone):
 
 
 def construct_issue(issue_data, milestone_number):
-    global target_org_users
+    global target_repo_users
     issue = {}
     comments = []
     if 'pull_request' in issue_data:
@@ -112,7 +112,7 @@ def construct_issue(issue_data, milestone_number):
         assignee = 'Unassigned'
         if issue_data['assignee'] is not None:
             assignee = '@'+issue_data['assignee']['login']
-            if issue_data['assignee']['login'] in target_org_users:
+            if issue_data['assignee']['login'] in target_repo_users:
                 issue['assignee'] = issue_data['assignee']['login']
         initial_comment['body'] = '* **Issue Imported From:** ' + issue_data['html_url'] + \
             '\n* **Original Issue Raised By:**@' + \
@@ -241,12 +241,12 @@ if __name__ == "__main__":
     headers['Authorization'] = 'token ' + bearer_token
     url_source_repo = url_template.format(repo=source_repo)
     url_target_repo = url_template.format(repo=target_repo)
-    target_org_name = target_repo.split('/')[0]
-    print("Getting list of collaborators from " + target_org_name)
-    target_org_members_url = 'https://api.github.com/orgs/' + target_org_name + '/members'
-    populate_target_org_members(target_org_members_url, headers)
+    print("Getting list of collaborators from " + target_repo)
+    target_repo_members_url = 'https://api.github.com/repos/' + \
+        target_repo + '/collaborators'
+    populate_target_repo_members(target_repo_members_url, headers)
     print('Total number of collaborators in  ' +
-          target_org_name+' is '+str(len(target_org_users)))
+          target_repo+' is '+str(len(target_repo_users)))
     print("Starting Migration of issues from repository "+source_repo +
           " to "+target_repo+" repository at "+time.strftime("%H:%M:%S"))
     import_issues(url_source_repo, url_target_repo, headers,
