@@ -99,7 +99,7 @@ def construct_issue(issue_data, milestone_number):
         issue['closed'] = True
     else:
         issue['title'] = issue_data['title']
-        if issue_data['body'] != "" and issue_data['body'] != "\r\n":
+        if issue_data['body'] != "" and issue_data['body'] != "\r\n" and issue_data['body'] != None:
             issue['body'] = issue_data['body']
         else:
             issue['body'] = 'No description provided.'
