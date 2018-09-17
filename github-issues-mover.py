@@ -7,6 +7,8 @@ import os
 request_count = 0
 milestones_cache = {}
 target_repo_users = []
+debug = os.environ.get('debug')
+verify = os.environ.get('verify')
 
 
 def post_data(url, payload, headers):
@@ -17,6 +19,9 @@ def post_data(url, payload, headers):
         response = requests.post(
             url, data=json.dumps(payload), headers=headers)
         if response.ok:
+            if debug == 'y':
+                print('payload \n' + json.dumps(payload) +
+                      '\nResponse is\n'+response.text)
             return json.loads(response.text), response.headers
         time.sleep(5)
         retry_cnt = retry_cnt + 1
@@ -191,7 +196,7 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
         new_issue, _ = post_data(issue_post_url, issue_payload, headers)
         issue_creation_status = {}
         cnt = 0
-        while cnt < 20:
+        while cnt < 500:
             callback_url = new_issue['url']
             issue_creation_status, _ = get_data(callback_url, headers)
             if issue_creation_status['status'] == 'imported':
@@ -199,15 +204,16 @@ def import_issues(url_source_repo, url_target_repo, headers, start_issue, end_is
             else:
                 time.sleep(5)
                 cnt = cnt + 1
-        target_url = url_target_repo + '/issues/' + str(issue)
-        issue_data_new, _ = get_data(target_url, headers)
-        if issue_data['number'] != issue_data_new['number']:
-            sys.exit('Exiting... Mismatch in issue number')
-        else:
-            if issue_data['title'] != issue_data_new['title'] and 'pull_request' not in issue_data:
+        if verify == 'y':
+            target_url = url_target_repo + '/issues/' + str(issue)
+            issue_data_new, _ = get_data(target_url, headers)
+            if issue_data['number'] != issue_data_new['number']:
                 sys.exit('Exiting... Mismatch in issue number')
             else:
-                print('verified' + ' ... ', end='')
+                if issue_data['title'] != issue_data_new['title'] and 'pull_request' not in issue_data:
+                    sys.exit('Exiting... Mismatch in issue number')
+                else:
+                    print('verified' + ' ... ', end='')
 
         if issue_data['state'] == 'open' and close_issue != 'n':
             close_original_issue(url_source_repo, headers,
