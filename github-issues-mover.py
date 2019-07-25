@@ -78,8 +78,8 @@ def create_milestone(milestones_post_url, headers, milestone):
         new_milestone = {}
         new_milestone['title'] = milestone['title']
         new_milestone['state'] = milestone['state']
-        new_milestone['description'] = milestone['description']
-        new_milestone['due_on'] = milestone['due_on']
+        if milestone['description'] is not None : new_milestone['description'] = milestone['description']
+        if milestone['due_on'] is not None : new_milestone['due_on'] = milestone['due_on']
         new_milestone_data, _ = post_data(
             milestones_post_url, new_milestone, headers)
         milestones_cache[new_milestone_data['title']
